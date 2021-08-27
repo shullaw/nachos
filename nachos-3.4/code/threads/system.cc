@@ -18,6 +18,9 @@ Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 					// for invoking context switches
+// HOMEWORK 1
+int which_func;
+
 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
@@ -108,6 +111,10 @@ Initialize(int argc, char **argv)
 	    randomYield = TRUE;
 	    argCount = 2;
 	}
+    // HOMEWORK 1
+    else if (!strcmp(*argv, "-tt")) {
+        which_func = atoi( *(argv + 1) );
+    }
 #ifdef USER_PROGRAM
 	if (!strcmp(*argv, "-s"))
 	    debugUserProg = TRUE;
