@@ -11,6 +11,7 @@
 
 #include "copyright.h"
 #include "system.h"
+#include "get_input.h"
 
 //----------------------------------------------------------------------
 // SimpleThread
@@ -79,12 +80,8 @@ void ThreadTest()
     DEBUG('t', "Entering ThreadTest");
 
     Thread *t1 = new Thread("forked thread T1");
-    Thread *t2 = new Thread("forked thread T2");  // HOMEWORK 1
-    Thread *t3 = new Thread("forked thread T3");  // HOMEWORK 1
 
-    t1->Fork(SimpleThreadOG, 1);
-    t2->Fork(SimpleThreadYield, 42);  // HOMEWORK 1
-    t3->Fork(SimpleThreadPrint, 3);  // HOMEWORK 1
-    // SimpleThread(0);
-    // printf("which_func: %d\n", which_func);  // HOMEWORK 1
+    if (which_func == 1){
+        t1->Fork(get_input, 1);
+    }
 }

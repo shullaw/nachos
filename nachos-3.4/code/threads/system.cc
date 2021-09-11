@@ -115,6 +115,10 @@ Initialize(int argc, char **argv)
     else if (!strcmp(*argv, "-tt")) {
         which_func = atoi( *(argv + 1) );
     }
+    //PROJECT 1 TASK 1
+    else if (!strcmp(*argv, "-P1")) {
+        which_func = atoi( *(argv + 1));
+    }
 #ifdef USER_PROGRAM
 	if (!strcmp(*argv, "-s"))
 	    debugUserProg = TRUE;
