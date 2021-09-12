@@ -163,5 +163,5 @@ void get_input(int user_input)
             printf("\nYour input was too large.  Please limit input to %d.\n", MAXIMUM);
         }
     }
-    delete input;  // memory leak prevented
+    delete [] input;  // memory leak prevented
 }
