@@ -16,7 +16,7 @@ all:
 	cd filesys; $(MAKE) depend
 	cd filesys; $(MAKE) nachos 
 	cd network; $(MAKE) depend
-	cd network; $(MAKE) nachos 
+	cd network; $(MAKE) nachos
 	cd bin; make all
 	cd test; make all
 

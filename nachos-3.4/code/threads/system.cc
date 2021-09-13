@@ -20,7 +20,8 @@ Timer *timer;				// the hardware timer device,
 					// for invoking context switches
 // HOMEWORK 1
 int which_func;
-
+// PROJECT 1
+extern char *input;
 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
@@ -116,7 +117,7 @@ Initialize(int argc, char **argv)
         which_func = atoi( *(argv + 1) );
     }
     //PROJECT 1 TASK 1
-    else if (!strcmp(*argv, "-P1")) {
+    else if (!strcmp(*argv, "-A")) {
         which_func = atoi( *(argv + 1));
     }
 #ifdef USER_PROGRAM
