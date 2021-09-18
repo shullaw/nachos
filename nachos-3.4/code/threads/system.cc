@@ -18,7 +18,6 @@ Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 					// for invoking context switches
-
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
 #endif
@@ -108,6 +107,9 @@ Initialize(int argc, char **argv)
 	    randomYield = TRUE;
 	    argCount = 2;
 	}
+    else if (!strcmp(*argv, "-tt")) {  // HOMEWORK 2
+        numLoops = atoi(*(argv+1));  // the number after "-tt"
+    }
 #ifdef USER_PROGRAM
 	if (!strcmp(*argv, "-s"))
 	    debugUserProg = TRUE;

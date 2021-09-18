@@ -11,6 +11,7 @@
 
 #include "copyright.h"
 #include "system.h"
+#include "synch.h"
 
 //----------------------------------------------------------------------
 // SimpleThread
@@ -21,31 +22,67 @@
 //	purposes.
 //----------------------------------------------------------------------
 
-void
-SimpleThread(int which)
-{
-    int num;
-    
-    for (num = 0; num < 5; num++) {
-	printf("*** thread %d looped %d times\n", which, num);
+typedef struct tInfo {
+    int id;
+    int nl;
+};
+
+const int numThreads = 5;
+int num = 0;
+int numLoops;
+ // when interrupt is off, there will be no random yeilding of threads
+Semaphore *numSem =  new Semaphore("Num Sem", 1);  // int arg is number of things you want to guard access to at a time
+
+int nums[numThreads]; // DinePhil --> sem array
+Semaphore **numSems = new Semaphore*[numThreads];  // dynamic array of pointers to guard one item per semaphore
+
+void SimpleThread(int param) {
+
+    tInfo* ti = (tInfo*)param;
+    for (int i = 0; i < ti->nl; i++) {  // each thread loops a number of times
+        
+        numSem->P();    // decrement the numSem semaphore (synch.cc); P = "to test"
+                        // preceding threads will yield if numSem->P() sees that value==0 (another thread was interrupted
+                        // during an operation
+                        // or value==1, proceed
+        // numSems[0]->P();
+        int x = num; 
+        x++;
+
+        int rand = Random() % 5;  // randomly yield threads, 
+        if (rand == 0) currentThread->Yield();
+
+        num = x;
+        numSem->V();  // interrupted threads will be notified that value==1, so they can proceed; V = "to increment"
+
+        printf("Thread %d, looped %d times, num is %d\n", ti->id, i, num);
         currentThread->Yield();
+
     }
 }
-
-
-//----------------------------------------------------------------------
-// ThreadTest
-// 	Invoke a test routine.
-//----------------------------------------------------------------------
-
-void
-ThreadTest()
+void ThreadTest()
 {
     DEBUG('t', "Entering ThreadTest");
+    Thread **threads = new Thread*[numThreads];
+    for (int i = 0; i < numThreads; i++)
+    {   
+        numSems[i] = new Semaphore("S", i);
+        threads[i] = new Thread("T");
+        tInfo *ti = new tInfo();
 
-    Thread *t = new Thread("forked thread");
+        ti->id = i; ti->nl = numLoops;
 
-    t->Fork(SimpleThread, 1);
-    SimpleThread(0);
+        threads[i]->Fork(SimpleThread, (int) ti);
+    }
+
+    // Thread ** threads = new Thread*[numThreads];
+    // for (int i = 0; i < numThreads; i++) {
+    //     threads[i] = new Thread("T");
+
+    //     tInfo *ti = new tInfo();
+    //     ti -> id = i; ti->nl = numLoops;
+
+    //     threads[i]->Fork(SimpleThread, (int) ti);
+    // }
+
 }
-
