@@ -18,10 +18,11 @@ Interrupt *interrupt;        // interrupt status
 Statistics *stats;           // performance metrics
 Timer *timer;                // the hardware timer device,
                              // for invoking context switches
-// HOMEWORK 1
+// HOMEWORK 1 and PROJECT2
+int numLoops;
 int which_func;
-// PROJECT 1
-bool prog_select = false;
+// PROJECT 1 and PROJECT2
+bool prog_select;
 #ifdef FILESYS_NEEDED
 FileSystem *fileSystem;
 #endif
@@ -92,24 +93,38 @@ void Initialize(int argc, char **argv)
     double rely = 1; // network reliability
     int netname = 0; // UNIX socket name
 #endif
-
     for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount)
     {
-        argCount = 1;
-        
-
-        //PROJECT 1 TASK 3
         if (!strcmp(*argv, "-A"))
         {
-            if (*(argv + 1) != '\0' && (*(argv + 1))[0] >= ZERO &&  (*(argv + 1))[0] <= NINE)
+            if (argc <= 1)
             {
-                if (!(*(argv + 1))[1]) {
-                which_func = atoi(*(argv + 1));
-                prog_select = true;
+                printf("\nMissing Program (1-6)\n");
+                Cleanup();
+            }
+            if (*(argv + 1) != '\0' && (*(argv + 1))[0] >= '1' && (*(argv + 1))[0] <= '6')
+            {
+                if (!(*(argv + 1))[1])
+                {
+                    prog_select = true;
+                    which_func = atoi((argv + 1)[0]);
+                    argCount = 2;
+                    // printf("%c", **(argv + 1));
+                }
+
+                if ((*(argv + 1))[1])
+                {
+                    printf("\nInvalid Input (1-6).\n");
+                    Cleanup();
                 }
             }
+            else
+            {
+                printf("\nInvalid Input.\n");
+                Cleanup();
+            }
         }
-        if (!strcmp(*argv, "-d") && prog_select)
+        else if (!strcmp(*argv, "-d") && prog_select)
         {
             if (argc == 1)
                 debugArgs = "+"; // turn on all debug flags
@@ -121,14 +136,22 @@ void Initialize(int argc, char **argv)
         }
         else if (!strcmp(*argv, "-rs") && prog_select)
         {
-          
+
             ASSERT(argc > 1);
             RandomInit(atoi(*(argv + 1))); // initialize pseudo-random
                                            // number generator
             randomYield = TRUE;
             argCount = 2;
-            
         }
+        else
+        {
+            printf("\nMissing -A!\n");
+            Cleanup();
+        }
+        // else if (!strcmp(*argv, "-tt"))
+        // {                                 // HOMEWORK 2
+        //     numLoops = atoi(*(argv + 1)); // the number after "-tt"
+        // }
 
 #ifdef USER_PROGRAM
         if (!strcmp(*argv, "-s"))
@@ -195,12 +218,16 @@ void Initialize(int argc, char **argv)
 //----------------------------------------------------------------------
 void Cleanup()
 {
-    if (prog_select==false) {
-        printf("Missing -A!\n");
-    }
-    if (which_func=='\0') {
-        printf("You need to choose a program (1 or 2).\n");
-    }
+    // if (prog_select == false)
+    // {
+    //     // printf("\nMissing -A!\n");
+    //     // printf("Args: %s")
+    //     // printf("argc%d\n",which_func);
+    // }
+    // else if (num_phi == '\0')
+    // {
+    //     printf("\nYou need to enter number of philosophers.\n");
+    // }
     printf("\nCleaning up...\n");
 #ifdef NETWORK
     delete postOffice;
